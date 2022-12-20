@@ -43,6 +43,8 @@ px4_add_module(
 	DEPENDS
 		launchdetection
     		npfg
+		SlewRate
+    npfg
 		runway_takeoff
 		SlewRate
 		tecs
