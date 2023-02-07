@@ -79,6 +79,17 @@ static constexpr float BADACC_BIAS_PNOISE = 4.9f;  ///< The delta velocity proce
 // ground effect compensation
 static constexpr uint64_t GNDEFFECT_TIMEOUT = 10e6; ///< Maximum period of time that ground effect protection will be active after it was last turned on (uSec)
 
+// GPS pre-flight check bit locations
+static constexpr uint32_t MASK_GPS_NSATS  = (1<<0);
+static constexpr uint32_t MASK_GPS_PDOP   = (1<<1);
+static constexpr uint32_t MASK_GPS_HACC   = (1<<2);
+static constexpr uint32_t MASK_GPS_VACC   = (1<<3);
+static constexpr uint32_t MASK_GPS_SACC   = (1<<4);
+static constexpr uint32_t MASK_GPS_HDRIFT = (1<<5);
+static constexpr uint32_t MASK_GPS_VDRIFT = (1<<6);
+static constexpr uint32_t MASK_GPS_HSPD   = (1<<7);
+static constexpr uint32_t MASK_GPS_VSPD   = (1<<8);
+
 enum class PositionFrame : uint8_t {
 	LOCAL_FRAME_NED = 0,
 	LOCAL_FRAME_FRD = 1,

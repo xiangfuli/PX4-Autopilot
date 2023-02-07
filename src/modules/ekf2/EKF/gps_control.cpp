@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- *   Copyright (c) 2021-2022 PX4 Development Team. All rights reserved.
+ *   Copyright (c) 2021-2023 PX4 Development Team. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,6 +60,7 @@ void Ekf::controlGpsFusion()
 		const Vector3f velocity{gps_sample.vel};
 		const float vel_var = sq(math::max(gps_sample.sacc, _params.gps_vel_noise));
 		const Vector3f vel_obs_var(vel_var, vel_var, vel_var * sq(1.5f));
+		const bool vel_good = (gps_sample.sacc < _params.req_sacc) || !(_params.gps_check_mask & MASK_GPS_SACC);
 		updateVelocityAidSrcStatus(gps_sample.time_us,
 					   velocity,                                                   // observation
 					   vel_obs_var,                                                // observation variance
@@ -82,6 +83,7 @@ void Ekf::controlGpsFusion()
 
 		const float pos_var = sq(pos_noise);
 		const Vector2f pos_obs_var(pos_var, pos_var);
+		const bool pos_good = (gps_sample.hacc < _params.req_hacc) || !(_params.gps_check_mask & MASK_GPS_HACC);
 		updateHorizontalPositionAidSrcStatus(gps_sample.time_us,
 						     position,                                   // observation
 						     pos_obs_var,                                // observation variance
@@ -119,7 +121,14 @@ void Ekf::controlGpsFusion()
 				&& _NED_origin_initialised;
 
 		const bool continuing_conditions_passing = mandatory_conditions_passing && !gps_checks_failing;
-		const bool starting_conditions_passing = continuing_conditions_passing && gps_checks_passing;
+
+		const bool starting_conditions_passing = continuing_conditions_passing
+				&& isNewestSampleRecent(_time_last_gps_buffer_push, 2 * GNSS_MAX_INTERVAL)
+				&& _gps_checks_passed
+				&& gps_checks_passing
+				&& !gps_checks_failing
+				&& vel_good
+				&& pos_good;
 
 		if (_control_status.flags.gps) {
 			if (mandatory_conditions_passing) {
@@ -128,6 +137,9 @@ void Ekf::controlGpsFusion()
 
 					fuseVelocity(_aid_src_gnss_vel);
 					fuseHorizontalPosition(_aid_src_gnss_pos);
+
+					const bool vel_fusion_failing = isTimedOut(_aid_src_gnss_vel.time_last_fuse, _params.reset_timeout_max);
+					const bool pos_fusion_failing = isTimedOut(_aid_src_gnss_pos.time_last_fuse, _params.reset_timeout_max);
 
 					bool do_vel_pos_reset = shouldResetGpsFusion();
 
@@ -146,12 +158,20 @@ void Ekf::controlGpsFusion()
 						}
 					}
 
-					if (do_vel_pos_reset) {
-						ECL_WARN("GPS fusion timeout, resetting velocity and position");
+					if ((do_vel_pos_reset || vel_fusion_failing) && vel_good) {
+						// reset velocity
+						ECL_WARN("GPS fusion timeout, resetting velocity to GPS (%.3f, %.3f, %.3f)", (double)velocity(0), (double)velocity(1), (double)velocity(2));
 						_information_events.flags.reset_vel_to_gps = true;
+						resetVelocityTo(velocity, vel_obs_var);
+						_aid_src_gnss_vel.time_last_fuse = _time_delayed_us;
+					}
+
+					if ((do_vel_pos_reset || pos_fusion_failing) && pos_good) {
+						// reset position
+						ECL_WARN("GPS fusion timeout, resetting position to GPS (%.3f, %.3f)", (double)position(0), (double)position(1));
 						_information_events.flags.reset_pos_to_gps = true;
-						resetVelocityTo(gps_sample.vel, vel_obs_var);
-						resetHorizontalPositionTo(gps_sample.pos, pos_obs_var);
+						resetHorizontalPositionTo(position, pos_obs_var);
+						_aid_src_gnss_pos.time_last_fuse = _time_delayed_us;
 					}
 
 				} else {
@@ -214,12 +234,14 @@ void Ekf::controlGpsFusion()
 			}
 		}
 
-	} else if (_control_status.flags.gps && !isNewestSampleRecent(_time_last_gps_buffer_push, (uint64_t)10e6)) {
+		_time_prev_gps_us = _gps_sample_delayed.time_us;
+
+	} else if (_control_status.flags.gps && isTimedOut(_time_prev_gps_us, (uint64_t)10e6)) {
 		stopGpsFusion();
 		_warning_events.flags.gps_data_stopped = true;
 		ECL_WARN("GPS data stopped");
 
-	}  else if (_control_status.flags.gps && !isNewestSampleRecent(_time_last_gps_buffer_push, (uint64_t)1e6)
+	}  else if (_control_status.flags.gps && isTimedOut(_time_prev_gps_us, 2 * GNSS_MAX_INTERVAL)
 		    && isOtherSourceOfHorizontalAidingThan(_control_status.flags.gps)) {
 
 		// Handle the case where we are fusing another position source along GPS,
@@ -236,8 +258,8 @@ bool Ekf::shouldResetGpsFusion() const
 	 * with no aiding we need to do something
 	 */
 	const bool has_horizontal_aiding_timed_out = isTimedOut(_time_last_hor_pos_fuse, _params.reset_timeout_max)
-						     && isTimedOut(_time_last_hor_vel_fuse, _params.reset_timeout_max)
-						     && isTimedOut(_aid_src_optical_flow.time_last_fuse, _params.reset_timeout_max);
+			&& isTimedOut(_time_last_hor_vel_fuse, _params.reset_timeout_max)
+			&& isTimedOut(_aid_src_optical_flow.time_last_fuse, _params.reset_timeout_max);
 
 	const bool is_reset_required = has_horizontal_aiding_timed_out
 				       || isTimedOut(_time_last_hor_pos_fuse, 2 * _params.reset_timeout_max);

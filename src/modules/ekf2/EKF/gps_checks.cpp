@@ -44,17 +44,6 @@
 #include <lib/world_magnetic_model/geo_mag_declination.h>
 #include <mathlib/mathlib.h>
 
-// GPS pre-flight check bit locations
-#define MASK_GPS_NSATS  (1<<0)
-#define MASK_GPS_PDOP   (1<<1)
-#define MASK_GPS_HACC   (1<<2)
-#define MASK_GPS_VACC   (1<<3)
-#define MASK_GPS_SACC   (1<<4)
-#define MASK_GPS_HDRIFT (1<<5)
-#define MASK_GPS_VDRIFT (1<<6)
-#define MASK_GPS_HSPD   (1<<7)
-#define MASK_GPS_VSPD   (1<<8)
-
 bool Ekf::collect_gps(const gpsMessage &gps)
 {
 	// Run GPS checks always
