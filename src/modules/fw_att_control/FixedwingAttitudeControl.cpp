@@ -415,6 +415,12 @@ void FixedwingAttitudeControl::Run()
 		} else {
 			// full manual
 			_wheel_ctrl.reset_integrator();
+
+			_landing_gear_wheel.normalized_wheel_setpoint = PX4_ISFINITE(_manual_control_setpoint.yaw) ?
+					_manual_control_setpoint.yaw : 0.f;
+			_landing_gear_wheel.timestamp = hrt_absolute_time();
+			_landing_gear_wheel_pub.publish(_landing_gear_wheel);
+
 		}
 
 		// manual flaps/spoilers control (is handled and published in FW Position controller if Auto)
