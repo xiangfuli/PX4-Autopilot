@@ -425,7 +425,7 @@ void FixedwingAttitudeControl::Run()
 
 			/* map flaps by default to manual if valid */
 			if (PX4_ISFINITE(_manual_control_setpoint.flaps)) {
-				flaps_control = (_manual_control_setpoint.flaps + 1.f) / 2.f ; // map from [-1, 1] to [0, 1]
+				flaps_control = math::max(_manual_control_setpoint.flaps, 0.f); // do not consider negative switch settings
 			}
 
 			flaps_setpoint_s flaps_setpoint;
@@ -441,13 +441,13 @@ void FixedwingAttitudeControl::Run()
 				break;
 
 			case 1:
-				// map from [-1, 1] to [0, 1]
-				spoilers_control = PX4_ISFINITE(_manual_control_setpoint.flaps) ? (_manual_control_setpoint.flaps + 1.f) * 0.5f : 0.f;
+				// do not consider negative switch settings
+				spoilers_control = PX4_ISFINITE(_manual_control_setpoint.flaps) ? math::max(_manual_control_setpoint.flaps, 0.f) : 0.f;
 				break;
 
 			case 2:
-				// map from [-1, 1] to [0, 1]
-				spoilers_control = PX4_ISFINITE(_manual_control_setpoint.aux1) ? (_manual_control_setpoint.aux1 + 1.f) * 0.5f : 0.f;
+				// do not consider negative switch settings
+				spoilers_control = PX4_ISFINITE(_manual_control_setpoint.aux1) ? math::max(_manual_control_setpoint.aux1, 0.f) : 0.f;
 				break;
 			}
 
