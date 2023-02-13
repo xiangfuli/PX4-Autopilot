@@ -943,6 +943,13 @@ FixedwingPositionControl::control_auto_fixed_bank_alt_hold(const float control_i
 	}
 
 	_att_sp.pitch_body = get_tecs_pitch();
+
+}
+
+void
+FixedwingPositionControl::control_auto_descend(const float control_interval)
+{
+	// Hard-code descend rate to 0.5m/s. This is a compromise to give the system to recover,
 	// but not letting it drift too far away.
 	const float descend_rate = -0.5f;
 
