@@ -43,6 +43,8 @@
 #include "ActuatorEffectivenessRotors.hpp"
 #include "ActuatorEffectivenessControlSurfaces.hpp"
 
+#include <uORB/topics/normalized_unsigned_setpoint.h>
+
 #include <uORB/Subscription.hpp>
 
 class ActuatorEffectivenessTailsitterVTOL : public ModuleParams, public ActuatorEffectiveness

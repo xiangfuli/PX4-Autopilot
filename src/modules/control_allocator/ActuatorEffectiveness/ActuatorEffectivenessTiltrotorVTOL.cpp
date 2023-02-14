@@ -96,14 +96,14 @@ void ActuatorEffectivenessTiltrotorVTOL::updateSetpoint(const matrix::Vector<flo
 		const matrix::Vector<float, NUM_ACTUATORS> &actuator_max)
 {
 	// apply flaps
-	flaps_setpoint_s flaps_setpoint;
+	normalized_unsigned_setpoint_s flaps_setpoint;
 
 	if (_flaps_setpoint_sub.copy(&flaps_setpoint)) {
 		_control_surfaces.applyFlaps(flaps_setpoint.normalized_setpoint, _first_control_surface_idx, actuator_sp);
 	}
 
 	// apply spoilers
-	spoilers_setpoint_s spoilers_setpoint;
+	normalized_unsigned_setpoint_s spoilers_setpoint;
 
 	if (_spoilers_setpoint_sub.copy(&spoilers_setpoint)) {
 		_control_surfaces.applySpoilers(spoilers_setpoint.normalized_setpoint, _first_control_surface_idx, actuator_sp);

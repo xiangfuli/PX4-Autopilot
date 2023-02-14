@@ -37,8 +37,7 @@
 #include "ActuatorEffectivenessRotors.hpp"
 #include "ActuatorEffectivenessControlSurfaces.hpp"
 
-#include <uORB/topics/flaps_setpoint.h>
-#include <uORB/topics/spoilers_setpoint.h>
+#include <uORB/topics/normalized_unsigned_setpoint.h>
 
 class ActuatorEffectivenessFixedWing : public ModuleParams, public ActuatorEffectiveness
 {

@@ -2206,12 +2206,12 @@ FixedwingPositionControl::Run()
 		// In Manual modes flaps and spoilers are directly controlled in the Attitude controller and not published here
 		if (_control_mode.flag_control_auto_enabled
 		    && _vehicle_status.vehicle_type == vehicle_status_s::VEHICLE_TYPE_FIXED_WING) {
-			flaps_setpoint_s flaps_setpoint;
+			normalized_unsigned_setpoint_s flaps_setpoint;
 			flaps_setpoint.normalized_setpoint = _flaps_setpoint_with_slewrate.getState();
 			flaps_setpoint.timestamp = hrt_absolute_time();
 			_flaps_setpoint_pub.publish(flaps_setpoint);
 
-			spoilers_setpoint_s spoilers_setpoint;
+			normalized_unsigned_setpoint_s spoilers_setpoint;
 			spoilers_setpoint.normalized_setpoint = _spoilers_setpoint_with_slewrate.getState();
 			spoilers_setpoint.timestamp = hrt_absolute_time();
 			_spoilers_setpoint_pub.publish(spoilers_setpoint);

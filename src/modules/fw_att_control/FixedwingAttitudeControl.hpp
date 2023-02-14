@@ -54,11 +54,10 @@
 #include <uORB/SubscriptionCallback.hpp>
 #include <uORB/topics/airspeed_validated.h>
 #include <uORB/topics/autotune_attitude_control_status.h>
-#include <uORB/topics/flaps_setpoint.h>
 #include <uORB/topics/landing_gear_wheel.h>
 #include <uORB/topics/manual_control_setpoint.h>
+#include <uORB/topics/normalized_unsigned_setpoint.h>
 #include <uORB/topics/parameter_update.h>
-#include <uORB/topics/spoilers_setpoint.h>
 #include <uORB/topics/vehicle_angular_velocity.h>
 #include <uORB/topics/vehicle_attitude.h>
 #include <uORB/topics/vehicle_attitude_setpoint.h>
@@ -114,8 +113,8 @@ private:
 	uORB::Publication<vehicle_attitude_setpoint_s>	_attitude_sp_pub;
 	uORB::Publication<vehicle_rates_setpoint_s>	_rate_sp_pub{ORB_ID(vehicle_rates_setpoint)};
 	uORB::Publication<landing_gear_wheel_s>		_landing_gear_wheel_pub{ORB_ID(landing_gear_wheel)};
-	uORB::Publication<flaps_setpoint_s> 		_flaps_setpoint_pub{ORB_ID(flaps_setpoint)};
-	uORB::Publication<spoilers_setpoint_s> 		_spoilers_setpoint_pub{ORB_ID(spoilers_setpoint)};
+	uORB::Publication<normalized_unsigned_setpoint_s> _flaps_setpoint_pub{ORB_ID(flaps_setpoint)};
+	uORB::Publication<normalized_unsigned_setpoint_s> _spoilers_setpoint_pub{ORB_ID(spoilers_setpoint)};
 
 	manual_control_setpoint_s		_manual_control_setpoint{};
 	vehicle_attitude_setpoint_s		_att_sp{};

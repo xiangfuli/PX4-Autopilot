@@ -46,10 +46,8 @@
 #include "ActuatorEffectivenessControlSurfaces.hpp"
 #include "ActuatorEffectivenessTilts.hpp"
 
+#include <uORB/topics/normalized_unsigned_setpoint.h>
 #include <uORB/topics/tiltrotor_extra_controls.h>
-
-#include <uORB/topics/flaps_setpoint.h>
-#include <uORB/topics/spoilers_setpoint.h>
 
 #include <uORB/Subscription.hpp>
 

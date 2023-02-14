@@ -434,7 +434,7 @@ VtolAttitudeControl::Run()
 				spoiler_control = _param_vt_spoiler_mc_ld.get();
 			}
 
-			spoilers_setpoint_s spoiler_setpoint;
+			normalized_unsigned_setpoint_s spoiler_setpoint;
 			spoiler_setpoint.normalized_setpoint = spoiler_control;
 			spoiler_setpoint.timestamp = hrt_absolute_time();
 			_spoilers_setpoint_pub.publish(spoiler_setpoint);

@@ -434,7 +434,7 @@ void FixedwingAttitudeControl::Run()
 				flaps_control = math::max(_manual_control_setpoint.flaps, 0.f); // do not consider negative switch settings
 			}
 
-			flaps_setpoint_s flaps_setpoint;
+			normalized_unsigned_setpoint_s flaps_setpoint;
 			flaps_setpoint.timestamp = hrt_absolute_time();
 			flaps_setpoint.normalized_setpoint = flaps_control;
 			_flaps_setpoint_pub.publish(flaps_setpoint);
@@ -457,7 +457,7 @@ void FixedwingAttitudeControl::Run()
 				break;
 			}
 
-			spoilers_setpoint_s spoilers_setpoint;
+			normalized_unsigned_setpoint_s spoilers_setpoint;
 			spoilers_setpoint.timestamp = hrt_absolute_time();
 			spoilers_setpoint.normalized_setpoint = spoilers_control;
 			_spoilers_setpoint_pub.publish(spoilers_setpoint);
