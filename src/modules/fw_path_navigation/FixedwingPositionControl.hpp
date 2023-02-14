@@ -167,9 +167,6 @@ static constexpr float MANUAL_TOUCHDOWN_NUDGE_INPUT_DEADZONE = 0.15f;
 // [s] time interval after touchdown for ramping in runway clamping constraints (touchdown is assumed at FW_LND_TD_TIME after start of flare)
 static constexpr float POST_TOUCHDOWN_CLAMP_TIME = 0.5f;
 
-static constexpr float kFlapSlewRate = 1.f; //minimum time from none to full flap deflection [s]
-static constexpr float kSpoilersSlewRate = 1.f; //minimum time from none to full spoiler deflection [s]
-
 class FixedwingPositionControl final : public ModuleBase<FixedwingPositionControl>, public ModuleParams,
 	public px4::WorkItem
 {
@@ -425,8 +422,8 @@ private:
 	int8_t _new_landing_gear_position{landing_gear_s::GEAR_KEEP};
 
 	// FLAPS/SPOILERS
-	SlewRate<float> _flaps_setpoint_with_slewrate;
-	SlewRate<float> _spoilers_setpoint_with_slewrate;
+	float _flaps_setpoint{0.f};
+	float _spoilers_setpoint{0.f};
 
 	hrt_abstime _time_in_fixed_bank_loiter{0}; // [us]
 	float _min_current_sp_distance_xy{FLT_MAX};

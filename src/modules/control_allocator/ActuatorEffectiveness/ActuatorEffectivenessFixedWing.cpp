@@ -61,21 +61,20 @@ ActuatorEffectivenessFixedWing::getEffectivenessMatrix(Configuration &configurat
 	return (rotors_added_successfully && surfaces_added_successfully);
 }
 
-void ActuatorEffectivenessFixedWing::updateSetpoint(const matrix::Vector<float, NUM_AXES> &control_sp,
-		int matrix_index, ActuatorVector &actuator_sp, const matrix::Vector<float, NUM_ACTUATORS> &actuator_min,
-		const matrix::Vector<float, NUM_ACTUATORS> &actuator_max)
+void ActuatorEffectivenessFixedWing::allocateAuxilaryControls(const float dt, ActuatorVector &actuator_sp)
 {
 	// apply flaps
 	normalized_unsigned_setpoint_s flaps_setpoint;
 
-	if (_flaps_setpoint_sub.copy(&flaps_setpoint)) {
-		_control_surfaces.applyFlaps(flaps_setpoint.normalized_setpoint, _first_control_surface_idx, actuator_sp);
-	}
+	_flaps_setpoint_sub.copy(&flaps_setpoint);
+
+	_control_surfaces.applyFlaps(flaps_setpoint.normalized_setpoint, _first_control_surface_idx, dt, actuator_sp);
 
 	// apply spoilers
 	normalized_unsigned_setpoint_s spoilers_setpoint;
 
-	if (_spoilers_setpoint_sub.copy(&spoilers_setpoint)) {
-		_control_surfaces.applySpoilers(spoilers_setpoint.normalized_setpoint, _first_control_surface_idx, actuator_sp);
-	}
+	_spoilers_setpoint_sub.copy(&spoilers_setpoint);
+
+	_control_surfaces.applySpoilers(spoilers_setpoint.normalized_setpoint, _first_control_surface_idx, dt, actuator_sp);
+
 }

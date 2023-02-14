@@ -36,6 +36,10 @@
 #include "ActuatorEffectiveness.hpp"
 
 #include <px4_platform_common/module_params.h>
+#include <lib/slew_rate/SlewRate.hpp>
+
+static constexpr float kFlapSlewRate = 0.5f; // slew rate for normalized flaps setpoint [1/s]
+static constexpr float kSpoilersSlewRate = 0.5f; // slew rate for normalized spoilers setpoint [1/s]
 
 class ActuatorEffectivenessControlSurfaces : public ModuleParams, public ActuatorEffectiveness
 {
@@ -85,8 +89,8 @@ public:
 
 	const Params &config(int idx) const { return _params[idx]; }
 
-	void applyFlaps(float flaps_control, int first_actuator_idx, ActuatorVector &actuator_sp) const;
-	void applySpoilers(float spoilers_control, int first_actuator_idx, ActuatorVector &actuator_sp) const;
+	void applyFlaps(float flaps_control, int first_actuator_idx, float dt, ActuatorVector &actuator_sp);
+	void applySpoilers(float spoilers_control, int first_actuator_idx, float dt, ActuatorVector &actuator_sp);
 
 private:
 	void updateParams() override;
@@ -104,4 +108,7 @@ private:
 
 	Params _params[MAX_COUNT] {};
 	int _count{0};
+
+	SlewRate<float> _flaps_setpoint_with_slewrate;
+	SlewRate<float> _spoilers_setpoint_with_slewrate;
 };

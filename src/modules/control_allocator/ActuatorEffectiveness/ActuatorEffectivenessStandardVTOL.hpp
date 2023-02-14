@@ -73,9 +73,7 @@ public:
 		normalize[1] = false;
 	}
 
-	void updateSetpoint(const matrix::Vector<float, NUM_AXES> &control_sp, int matrix_index,
-			    ActuatorVector &actuator_sp, const matrix::Vector<float, NUM_ACTUATORS> &actuator_min,
-			    const matrix::Vector<float, NUM_ACTUATORS> &actuator_max) override;
+	void allocateAuxilaryControls(const float dt, ActuatorVector &actuator_sp) override;
 
 	void setFlightPhase(const FlightPhase &flight_phase) override;
 
