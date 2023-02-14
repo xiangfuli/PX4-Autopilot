@@ -120,7 +120,18 @@ FixedwingRateControl::vehicle_manual_poll()
 				_rates_sp.thrust_body[0] = (_manual_control_setpoint.throttle + 1.f) * .5f;
 
 				_rate_sp_pub.publish(_rates_sp);
-				_rate_control.resetIntegral();
+
+				if (_param_fw_acro_int_reset.get() & Axes::roll) {
+					_rate_control.resetIntegral(0);
+				}
+
+				if (_param_fw_acro_int_reset.get() & Axes::pitch) {
+					_rate_control.resetIntegral(1);
+				}
+
+				if (_param_fw_acro_int_reset.get() & Axes::yaw) {
+					_rate_control.resetIntegral(2);
+				}
 
 			} else {
 				/* manual/direct control */

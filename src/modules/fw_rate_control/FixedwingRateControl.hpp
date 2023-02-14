@@ -99,6 +99,12 @@ public:
 	bool init();
 
 private:
+	enum Axes : int32_t {
+		roll = (1 << 0),
+		pitch = (1 << 1),
+		yaw = (1 << 2)
+	};
+
 	void Run() override;
 
 	void publishTorqueSetpoint(const hrt_abstime &timestamp_sample);
@@ -158,6 +164,7 @@ private:
 		(ParamFloat<px4::params::FW_ACRO_X_MAX>) _param_fw_acro_x_max,
 		(ParamFloat<px4::params::FW_ACRO_Y_MAX>) _param_fw_acro_y_max,
 		(ParamFloat<px4::params::FW_ACRO_Z_MAX>) _param_fw_acro_z_max,
+		(ParamInt<px4::params::FW_ACRO_I_RESET>) _param_fw_acro_int_reset,
 
 		(ParamFloat<px4::params::FW_AIRSPD_MAX>) _param_fw_airspd_max,
 		(ParamFloat<px4::params::FW_AIRSPD_MIN>) _param_fw_airspd_min,
