@@ -70,7 +70,7 @@ private:
 	static void fillGlobalHomePos(home_position_s &home, const vehicle_global_position_s &gpos);
 	static void fillGlobalHomePos(home_position_s &home, double lat, double lon, float alt);
 
-	uORB::Subscription					_vehicle_gps_position_sub{ORB_ID(vehicle_gps_position)};
+	uORB::SubscriptionData<sensor_gps_s>			_vehicle_gps_position_sub{ORB_ID(vehicle_gps_position)};
 
 	uORB::SubscriptionData<vehicle_global_position_s>	_global_position_sub{ORB_ID(vehicle_global_position)};
 	uORB::SubscriptionData<vehicle_local_position_s>	_local_position_sub{ORB_ID(vehicle_local_position)};
@@ -81,9 +81,4 @@ private:
 	bool							_valid{false};
 	const failsafe_flags_s					&_failsafe_flags;
 	bool							_gps_position_for_home_valid{false};
-	double							_gps_lat{0};
-	double							_gps_lon{0};
-	float							_gps_alt{0.f};
-	float							_gps_eph{0.f};
-	float							_gps_epv{0.f};
 };
